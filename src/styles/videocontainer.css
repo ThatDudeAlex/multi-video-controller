@@ -1,0 +1,6 @@
+video {
+    width: 100%    !important;
+    height: auto   !important;
+    /* max-width: 380px; */
+    max-height: 300px;
+}
