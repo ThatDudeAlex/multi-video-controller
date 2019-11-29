@@ -6,5 +6,6 @@ export default{
     toggleSingleVideo: 'm',
     nextVideo: 'n',
     prevVideo: 'p',
-    reStart: 'r'
+    reStart: 'r',
+    bookmark: 'b'
 }
