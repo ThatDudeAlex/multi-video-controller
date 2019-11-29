@@ -18,6 +18,8 @@ class VideoContainer extends Component {
                             </video>
                             <br></br>
                             <div id={`videoDesc${index}`} className='text-center' style={{fontSize:'22px'}}>{`video-${index + 1}`}</div>
+                            <br></br>
+                            <div className='text-center'></div>
                         </Col>
                     )
                 })}

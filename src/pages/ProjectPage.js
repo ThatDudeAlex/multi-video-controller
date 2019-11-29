@@ -16,16 +16,16 @@ export default class ProjectPage extends Component {
         const videos = [];
 
         for(let i = 0; i < getVideos.length; i++){
-            videos.push(getVideos[i])
+            videos.push({video: getVideos[i], index: i})
         }
 
-        this.setState({allVideos:videos})
+        this.setState({allVideos:videos, videosSelected:videos})
 
         document.body.addEventListener("keydown", this.hotKeyControls)
     }
 
     hotKeyControls = (event) => {
-        const videos = this.state.allVideos
+        const videos = this.state.videosSelected
 
         switch(event.key){
             case (hotKeys.playOrPauseBtn1):
@@ -44,7 +44,13 @@ export default class ProjectPage extends Component {
                 this.reStartVideo(videos)
                 break;
             case (hotkeys.toggleSingleVideo):
-                // this.reStartVideo(videos)
+                this.toggleSingleVideo(videos)
+                break;
+            case (hotkeys.nextVideo):
+                this.nextVideo(videos)
+                break;
+            case (hotKeys.prevVideo):
+                this.prevVideo(videos)
                 break;
             default:
                 break;
@@ -53,17 +59,21 @@ export default class ProjectPage extends Component {
 
     // play or pause the videos
     playOrPause = (videos) => {
-        videos.map(video => {
-            if(!video.ended & video.paused)
+        videos.forEach(currentVideo => {
+            const video = currentVideo.video;
+
+            if (!video.ended & video.paused)
                 video.play()
             else
                 video.pause()
         })
     }
 
-    // fast-forward 5secs
+    // fast-forward 2secs
     fastForward = (videos) => {
-        videos.forEach(video => {
+        videos.forEach(currentVideo => {
+            const video = currentVideo.video;
+
             if((video.currentTime + 2) < video.duration){
                 video.currentTime += 2;
             }
@@ -73,9 +83,11 @@ export default class ProjectPage extends Component {
         })
     }
 
-    // rewind 5secs
+    // rewind 2secs
     rewind = (videos) => {
-        videos.forEach(video => {
+        videos.forEach(currentVideo => {
+            const video = currentVideo.video;
+
             if ((video.currentTime - 2) > 0) {
                 video.currentTime -= 2;
             }
@@ -86,20 +98,53 @@ export default class ProjectPage extends Component {
     }
 
     // toggle between single & multi video control
-    toggleSingleVideo = () => {
+    toggleSingleVideo = (videos) => {
+        const allVideos = this.state.allVideos
+        const selectedVideo = this.state.videosSelected[0];
+        const index = selectedVideo.index;
 
+        if(videos.length > 1){
+            this.setState({videosSelected: [selectedVideo]})
+            document.getElementById('videoDesc0').style.color = "#5cb5ea"
+        }
+        else if(videos.length === 1){
+            document.getElementById(`videoDesc${index}`).style.color = "black"
+            this.setState({ videosSelected: allVideos.map(vid => vid) })
+        }
     }
 
-    nextVideo = () => {
+    // controls the next videos
+    nextVideo = (videos) => {
+        const allVideos = this.state.allVideos;
+        const lastIndex = allVideos.length - 1;
+        const currIndex = videos[0].index;
+        const nextIndex = ((currIndex + 1) <= lastIndex) ? (currIndex + 1) : 0;
 
+        if (videos.length === 1) {
+            document.getElementById(`videoDesc${currIndex}`).style.color = "black"
+            document.getElementById(`videoDesc${nextIndex}`).style.color = "#5cb5ea"
+
+            this.setState({ videosSelected: [allVideos[nextIndex]] })
+        }
     }
 
-    prevVideo = () => {
+    // controls the previous video 
+    prevVideo = (videos) => {
+        const allVideos = this.state.allVideos;
+        const lastIndex = allVideos.length - 1;
+        const currIndex = videos[0].index;
+        const prevIndex = ((currIndex - 1) >= 0) ? (currIndex - 1) : lastIndex;
 
+        document.getElementById(`videoDesc${currIndex}`).style.color = "black"
+        document.getElementById(`videoDesc${prevIndex}`).style.color = "#5cb5ea"
+
+        this.setState({ videosSelected: [allVideos[prevIndex]] })
     }
 
+    // restarts all selected videos
     reStartVideo = (videos) => {
-        videos.map(video => {
+        videos.forEach(currentVideo => {
+            const video = currentVideo.video;
             video.currentTime = 0;
         })
     }
@@ -107,7 +152,6 @@ export default class ProjectPage extends Component {
 
 
     render() {
-
         const videos = [
             { url: "http://clips.vorwaerts-gmbh.de/big_buck_bunny.ogv", type: "video/ogg" },
             { url: "http://media.w3.org/2010/05/sintel/trailer.mp4", type: "video/mp4" }
