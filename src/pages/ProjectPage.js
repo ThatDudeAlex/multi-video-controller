@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import VideoContainer from '../components/VideoContainer'
 import hotKeys from '../constants/hotkeys'
+import hotkeys from '../constants/hotkeys';
 
 export default class ProjectPage extends Component {
 
@@ -27,16 +28,23 @@ export default class ProjectPage extends Component {
         const videos = this.state.allVideos
 
         switch(event.key){
-            case (hotKeys.playOrPauseBtn1 || hotKeys.playOrPauseBtn2):
+            case (hotKeys.playOrPauseBtn1):
+                this.playOrPause(videos)
+                break;
+            case (hotKeys.playOrPauseBtn2):
                 this.playOrPause(videos)
                 break;
             case (hotKeys.fastForward):
+                this.fastForward(videos)
                 break;
             case (hotKeys.rewind):
+                this.rewind(videos)
                 break;
-            case (hotKeys.nextFrame):
+            case (hotkeys.reStart):
+                this.reStartVideo(videos)
                 break;
-            case (hotKeys.prevFrame):
+            case (hotkeys.toggleSingleVideo):
+                // this.reStartVideo(videos)
                 break;
             default:
                 break;
@@ -45,9 +53,8 @@ export default class ProjectPage extends Component {
 
     // play or pause the videos
     playOrPause = (videos) => {
-        videos.forEach(video => {
-            // console.log(video.pause)
-            if(video.paused)
+        videos.map(video => {
+            if(!video.ended & video.paused)
                 video.play()
             else
                 video.pause()
@@ -55,23 +62,27 @@ export default class ProjectPage extends Component {
     }
 
     // fast-forward 5secs
-    fastForward = () => {
-
+    fastForward = (videos) => {
+        videos.forEach(video => {
+            if((video.currentTime + 2) < video.duration){
+                video.currentTime += 2;
+            }
+            else{
+                video.currentTime = video.duration;
+            }
+        })
     }
 
     // rewind 5secs
-    rewind = () => {
-
-    }
-
-    // skip to next frame
-    nextFrame = () => {
-
-    }
-
-    // go to previous frame
-    prevFrame = () => {
-
+    rewind = (videos) => {
+        videos.forEach(video => {
+            if ((video.currentTime - 2) > 0) {
+                video.currentTime -= 2;
+            }
+            else {
+                video.currentTime = 0;
+            }
+        })
     }
 
     // toggle between single & multi video control
@@ -84,7 +95,13 @@ export default class ProjectPage extends Component {
     }
 
     prevVideo = () => {
-        
+
+    }
+
+    reStartVideo = (videos) => {
+        videos.map(video => {
+            video.currentTime = 0;
+        })
     }
 
 

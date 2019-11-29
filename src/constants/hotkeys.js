@@ -2,9 +2,9 @@ export default{
     playOrPauseBtn1: ' ',
     playOrPauseBtn2: 'k',
     fastForward: 'l',
-    rewind: 'k',
-    nextFrame: 'ArrowRight',
-    prevFrame: 'ArrowLeft',
+    rewind: 'j',
+    toggleSingleVideo: 'm',
     nextVideo: 'n',
-    prevVideo: 'p'
+    prevVideo: 'p',
+    reStart: 'r'
 }
